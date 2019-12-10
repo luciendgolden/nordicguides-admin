@@ -1,6 +1,6 @@
 <template>
-    <v-app>
-        <core-navbar />
+    <v-app style="background: #eee;">
+        <core-navbar/>
     </v-app>
 </template>
 
@@ -8,7 +8,7 @@
     import CoreNavbar from "./components/core/CoreNavbar";
 
     export default {
-        name: "app",
+        name: "App",
         components: {CoreNavbar}
     }
 </script>

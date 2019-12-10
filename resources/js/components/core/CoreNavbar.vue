@@ -1,21 +1,30 @@
 <template>
-    <v-app id="sandbox">
+    <div class="nav">
         <v-navigation-drawer
+            id="app-drawer"
             v-model="primaryDrawer.model"
             app
-            overflow
+            dark
+            :src="image"
+            mobile-break-point="991"
+            width="260"
         >
+
             <v-list-item>
+                <v-list-item-icon>
+                    <v-avatar color="white">
+                        <img
+                            :src="logo"
+                            alt="logo"
+                        >
+                    </v-avatar>
+                </v-list-item-icon>
                 <v-list-item-content>
                     <v-list-item-title class="title">
-                        Application
+                        Nordic Guides
                     </v-list-item-title>
-                    <v-list-item-subtitle>
-                        subtext
-                    </v-list-item-subtitle>
                 </v-list-item-content>
             </v-list-item>
-
             <v-divider></v-divider>
 
             <v-list
@@ -23,6 +32,7 @@
                 nav
             >
                 <v-list-item
+                    class="ma-3"
                     v-for="item in items"
                     :key="item.title"
                     link
@@ -40,24 +50,66 @@
 
         <v-app-bar
             app
+            flat
+            style="background: #eee;"
         >
             <v-app-bar-nav-icon
-                v-if="primaryDrawer.type !== 'permanent'"
-                @click.stop="primaryDrawer.model = !primaryDrawer.model"
-            />
-            <v-toolbar-title>Vuetify</v-toolbar-title>
+                v-if="responsive"
+                @click.stop="onClickBtn"
+            >
+            </v-app-bar-nav-icon>
+            <v-toolbar-title class="ma-5 subtitle-1 font-weight-light">
+                Dashboard
+            </v-toolbar-title>
         </v-app-bar>
 
         <core-content/>
 
         <v-footer
+            id="core-footer"
+            color="#eee"
             inset
             app
+            height="82"
         >
-            <span class="px-4">&copy; {{ new Date().getFullYear() }}</span>
+            <v-spacer/>
+            <span class="font-weight-light copyright">
+      &copy;
+      {{ (new Date()).getFullYear() }}
+      Lucien D. Golden, made with
+      <v-icon
+          color="tertiary"
+          size="17">mdi-heart</v-icon>
+      for a better web
+    </span>
         </v-footer>
-    </v-app>
+    </div>
 </template>
+
+<style lang="scss">
+    .v-navigation-drawer__content {
+        background: rgba(27, 27, 27, .74);
+    }
+
+    .v-navigation-drawer .v-list {
+        background: none;
+    }
+
+    #app-drawer {
+        .v-list__tile {
+            border-radius: 4px;
+
+            &--buy {
+                margin-top: auto;
+                margin-bottom: 17px;
+            }
+        }
+    }
+
+    #core-footer {
+        z-index: 0;
+    }
+</style>
 
 <script>
     import CoreContent from './CoreContent'
@@ -65,18 +117,44 @@
     export default {
         name: 'navbar',
         data: () => ({
+            color: 'success',
+            logo: 'https://res.cloudinary.com/dj4qfshsx/image/upload/v1575658748/nordicguides/favicon_r9mkuj.png',
+            image: 'https://demos.creative-tim.com/vue-material-dashboard/img/sidebar-2.32103624.jpg',
+            responsive: false,
             primaryDrawer: {
                 model: null,
-                type: 'default (no property)',
-                floating: false,
-                mini: false,
             },
             items: [
                 {title: 'Dashboard', icon: 'mdi-view-dashboard'},
                 {title: 'Photos', icon: 'mdi-image'},
                 {title: 'About', icon: 'mdi-help-box'},
             ],
+            links: [
+                {name: 'Home', Link: '/#'},
+                {name: 'Creative Tim', Link: 'https://www.creative-tim.com'},
+                {name: 'About Us', Link: 'https://creative-tim.com/presentation'},
+                {name: 'Blog', Link: 'https://blog.creative-tim.com'}
+            ],
         }),
+        mounted() {
+            this.onResponsiveInverted()
+            window.addEventListener('resize', this.onResponsiveInverted)
+        },
+        beforeDestroy() {
+            window.removeEventListener('resize', this.onResponsiveInverted)
+        },
+        methods: {
+            onClickBtn() {
+                this.primaryDrawer.model = !this.primaryDrawer.model
+            },
+            onResponsiveInverted() {
+                if (window.innerWidth < 991) {
+                    this.responsive = true
+                } else {
+                    this.responsive = false
+                }
+            },
+        },
         components: {
             CoreContent
         }

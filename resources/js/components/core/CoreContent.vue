@@ -1,13 +1,15 @@
 <template>
     <v-content>
-        <v-container fluid>
-        </v-container>
+        <v-fade-transition mode="out-in">
+            <router-view>
+                <v-container fluid></v-container>
+            </router-view>
+        </v-fade-transition>
     </v-content>
 </template>
 
 <script>
-    export default {
-    }
+    export default {}
 </script>
 
 <style scoped>
