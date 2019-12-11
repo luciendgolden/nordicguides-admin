@@ -9,7 +9,9 @@
 
     export default {
         name: "App",
-        components: {CoreNavbar}
+        created() {
+        },
+        components: { CoreNavbar }
     }
 </script>
 

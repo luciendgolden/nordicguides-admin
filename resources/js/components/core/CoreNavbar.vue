@@ -35,6 +35,7 @@
                     class="ma-3"
                     v-for="item in items"
                     :key="item.title"
+                    :to="item.path"
                     link
                 >
                     <v-list-item-icon>
@@ -59,7 +60,12 @@
             >
             </v-app-bar-nav-icon>
             <v-toolbar-title class="ma-5 subtitle-1 font-weight-light">
-                Dashboard
+                <span v-if="title">
+                    {{ title }}
+                </span>
+                <span v-else>
+                    Dashboard
+                </span>
             </v-toolbar-title>
         </v-app-bar>
 
@@ -117,6 +123,7 @@
     export default {
         name: 'navbar',
         data: () => ({
+            title: null,
             color: 'success',
             logo: 'https://res.cloudinary.com/dj4qfshsx/image/upload/v1575658748/nordicguides/favicon_r9mkuj.png',
             image: 'https://demos.creative-tim.com/vue-material-dashboard/img/sidebar-2.32103624.jpg',
@@ -125,9 +132,10 @@
                 model: null,
             },
             items: [
-                {title: 'Dashboard', icon: 'mdi-view-dashboard'},
-                {title: 'Photos', icon: 'mdi-image'},
-                {title: 'About', icon: 'mdi-help-box'},
+                {title: 'User Profile', path: '/', icon: 'mdi-view-dashboard'},
+                {title: 'Members', path: '/members', icon: 'mdi-image'},
+                {title: 'Languages', path: '/languages', icon: 'mdi-help-box'},
+                {title: 'Fees', path: '/fees', icon: 'mdi-help-box'},
             ],
             links: [
                 {name: 'Home', Link: '/#'},
@@ -136,6 +144,11 @@
                 {name: 'Blog', Link: 'https://blog.creative-tim.com'}
             ],
         }),
+        watch: {
+            '$route'(val) {
+                this.title = val.name
+            }
+        },
         mounted() {
             this.onResponsiveInverted()
             window.addEventListener('resize', this.onResponsiveInverted)
