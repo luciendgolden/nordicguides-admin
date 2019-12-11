@@ -11,7 +11,7 @@ const opts = {
         primary: '#ff4f2b',
         secondary: '#429798',
     },
-    iconfont: 'mdi',
+    iconfont: 'md',
 }
 
 export default new Vuetify(opts)

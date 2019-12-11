@@ -14,22 +14,51 @@ class MemberController extends Controller
         return response()->json(MemberModel::get(), 200);
     }
 
-    public function findById($id){
+    public function findById($id)
+    {
         return response()->json(MemberModel::find($id), 200);
     }
 
     /**
      * Update Member
      */
-    public function memberUpdate(Request $request, MemberModel $member){
-        $member->update($request->all());
-        return response()->json($member, 200);
+    public function update(Request $request, MemberModel $member)
+    {
+        $email = $request->input('email');
+        $id = $request->input('memberID');
+
+        if ($email) {
+            $members = DB::table('members')
+                ->where('members.email', $email)
+                ->get();
+
+            if ($members->isEmpty()) {
+                $member->update($request->all());
+                return response()->json($member, 200);
+            } else {
+                $oldEmail = DB::table('members')
+                    ->where('members.memberID', $id)
+                    ->value('email');
+                if ($oldEmail === $email) {
+                    $member->update($request->all());
+                    return response()->json($member, 200);
+                } else {
+                    return response()->json(['message' => 'Email already exists'], 500);
+                }
+            }
+        } else {
+            $member->update($request->all());
+            return response()->json($member, 200);
+        }
+
+
     }
 
     /**
      * Delete Member
      */
-    public function memberDelete(Request $request, MemberModel $member){
+    public function memberDelete(Request $request, MemberModel $member)
+    {
         $member->delete();
         return response()->json(['message' => 'success'], 204);
     }
@@ -37,12 +66,13 @@ class MemberController extends Controller
     /**
      * Show the list of guides in a city
      */
-    public function showListOfGuidesInCity($id){
+    public function showListOfGuidesInCity($id)
+    {
         /**
-         SELECT members.memberID, members.firstname, members.lastname FROM members
-        INNER JOIN membergroups ON members.memberID=membergroups.memberID
-        INNER JOIN groups ON membergroups.groupID=groups.groupID
-        INNER JOIN groupcities ON groups.groupID=groupcities.groupID WHERE groupcities.cityID=1
+         * SELECT members.memberID, members.firstname, members.lastname FROM members
+         * INNER JOIN membergroups ON members.memberID=membergroups.memberID
+         * INNER JOIN groups ON membergroups.groupID=groups.groupID
+         * INNER JOIN groupcities ON groups.groupID=groupcities.groupID WHERE groupcities.cityID=1
          */
 
         $members = DB::table('members')

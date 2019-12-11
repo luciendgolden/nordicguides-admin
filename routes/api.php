@@ -21,10 +21,15 @@ Route::get('cities', 'City\CityController@findAll');
 
 Route::get('members', 'Member\MemberController@findAll');
 Route::get('members/{id}', 'Member\MemberController@findById');
+Route::put('members/{member}', 'Member\MemberController@update');
+
 Route::get('members/city/{id}', 'Member\MemberController@showListOfGuidesInCity');
 
 Route::get('memberlanguages', 'Languages\MemberLanguagesController@findAll');
 Route::get('memberlanguages/{memberId}', 'Languages\MemberLanguagesController@findById');
+
+Route::post('login', 'Login\LoginController@doLogin');
+Route::post('register', 'Login\LoginController@doLogin');
 
 Route::get('group', 'Group\GroupController@findAll');
 Route::get('group/{memberId}', 'Group\GroupController@getMemberGroupByMemberId');

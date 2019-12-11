@@ -14,19 +14,69 @@
                             <v-form>
                                 <v-container>
                                     <v-layout row wrap>
-                                        <v-flex xs12 sm6 v-for="(value, key) in user" :key="key">
-                                            <v-text-field  @change="getUser" :value="value" :label="key"></v-text-field>
+                                        <v-flex xs12 sm6>
+                                            <v-text-field v-model="user.firstname" label="Firstname"></v-text-field>
                                         </v-flex>
-                                        <v-flex xs12 v-if="groupNames.length > 0 && languages.length > 0">
-                                            <v-flex xs12 sm6>
-                                                <v-combobox v-model="groupNames" label="Membergroups" chips multiple
-                                                            readonly></v-combobox>
-                                            </v-flex>
-                                            <v-flex xs12 sm6>
-                                                <v-combobox v-model="languages" label="Languages" chips multiple
-                                                            readonly></v-combobox>
-                                            </v-flex>
+                                        <v-flex xs12 sm6>
+                                            <v-text-field v-model="user.lastname" label="Lastname"></v-text-field>
                                         </v-flex>
+                                        <v-flex xs12 sm6>
+                                            <v-menu
+                                                :close-on-content-click="false"
+                                                :nudge-right="40"
+                                                transition="scale-transition"
+                                                offset-y
+                                                min-width="290px"
+                                            >
+                                            <template v-slot:activator="{ on }">
+                                                <v-text-field
+                                                    v-model="user.birthdate"
+                                                    label="Birthdate"
+                                                    prepend-icon="date_range"
+                                                    readonly
+                                                    :rules="[v => !!v || 'Date is required']"
+                                                    v-on="on"
+                                                ></v-text-field>
+                                            </template>
+                                            <v-date-picker
+                                                color="success"
+                                                v-model="user.birthdate"
+                                            ></v-date-picker>
+                                            </v-menu>
+                                        </v-flex>
+                                        <v-flex xs12 sm6>
+                                            <v-text-field v-model="user.email" label="E-Mail"></v-text-field>
+                                        </v-flex>
+                                        <v-flex xs12 sm6>
+                                            <v-text-field v-model="user.street" label="Street"></v-text-field>
+                                        </v-flex>
+                                        <v-flex xs12 sm6>
+                                            <v-text-field v-model="user.city" label="City"></v-text-field>
+                                        </v-flex>
+                                        <v-flex xs12 sm6>
+                                            <v-text-field v-model="user.zip" label="Zip"></v-text-field>
+                                        </v-flex>
+                                        <v-flex xs12 sm6>
+                                            <v-text-field v-model="user.phone" label="Phone"></v-text-field>
+                                        </v-flex>
+                                        <v-flex xs12 sm6>
+                                            <v-combobox v-model="user.role" :items="roles" label="Role" chips></v-combobox>
+                                        </v-flex>
+                                        <v-flex xs12 sm6>
+                                            <v-combobox v-model="user.driverslicense" :items="driversLicense" label="Driverslicense"></v-combobox>
+                                        </v-flex>
+                                        <v-flex xs12>
+                                            <v-text-field v-model="user.profileimage" label="Profile Image"></v-text-field>
+                                        </v-flex>
+
+                                        <div v-if="groupNames.length > 0 && languages.length > 0">
+                                            <v-flex xs12>
+                                                <v-combobox v-model="groupNames" :items="groupNames" label="Membergroups" chips multiple readonly></v-combobox>
+                                            </v-flex>
+                                            <v-flex xs12>
+                                                <v-combobox v-model="languages" :items="languages" label="Languages" chips multiple readonly></v-combobox>
+                                            </v-flex>
+                                        </div>
                                         <v-flex
                                             xs12
                                             text-xs-right
@@ -34,6 +84,7 @@
                                             <v-btn
                                                 class="mx-0 font-weight-light"
                                                 color="success"
+                                                @click="save()"
                                             >
                                                 Update Profile
                                             </v-btn>
@@ -87,15 +138,17 @@
         name: "UserProfile",
         data() {
             return {
-                image: 'https://res.cloudinary.com/dj4qfshsx/image/upload/v1576023571/nordicguides/guide/marc.aba54d65_nlmplz.jpg',
                 groups: [],
                 memberlanguages: [],
-                myUser: {}
+                roles: ["member", "admin"],
+                driversLicense:["yes", "no"],
+                editedUser: null,
             }
         },
         methods:{
-            getUser(e){
-                this.$store.dispatch('getUser', e.target.value)
+            save(){
+                this.editedUser = Object.assign({}, this.user);
+                this.$store.dispatch('updateUser', this.editedUser);
             }
         },
         computed: {

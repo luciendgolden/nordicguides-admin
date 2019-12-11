@@ -132,16 +132,11 @@
                 model: null,
             },
             items: [
-                {title: 'User Profile', path: '/', icon: 'mdi-view-dashboard'},
-                {title: 'Members', path: '/members', icon: 'mdi-image'},
-                {title: 'Languages', path: '/languages', icon: 'mdi-help-box'},
-                {title: 'Fees', path: '/fees', icon: 'mdi-help-box'},
-            ],
-            links: [
-                {name: 'Home', Link: '/#'},
-                {name: 'Creative Tim', Link: 'https://www.creative-tim.com'},
-                {name: 'About Us', Link: 'https://creative-tim.com/presentation'},
-                {name: 'Blog', Link: 'https://blog.creative-tim.com'}
+                {title: 'User Profile', path: '/user-profile', icon: 'dashboard'},
+                {title: 'Members', path: '/members', icon: 'supervised_user_circle'},
+                {title: 'Languages', path: '/languages', icon: 'language'},
+                {title: 'Fees', path: '/fees', icon: 'payment'},
+                {title: 'Logout', path: '/logout', icon: 'mdi-logout'},
             ],
         }),
         watch: {
