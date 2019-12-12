@@ -30,10 +30,32 @@
             <v-list
                 dense
                 nav
+                v-if="user.role == 'admin'"
             >
                 <v-list-item
                     class="ma-3"
-                    v-for="item in items"
+                    v-for="item in itemsAdmin"
+                    :key="item.title"
+                    :to="item.path"
+                    link
+                >
+                    <v-list-item-icon>
+                        <v-icon>{{ item.icon }}</v-icon>
+                    </v-list-item-icon>
+
+                    <v-list-item-content>
+                        <v-list-item-title>{{ item.title }}</v-list-item-title>
+                    </v-list-item-content>
+                </v-list-item>
+            </v-list>
+            <v-list
+                dense
+                nav
+                v-else
+            >
+                <v-list-item
+                    class="ma-3"
+                    v-for="item in itemsMember"
                     :key="item.title"
                     :to="item.path"
                     link
@@ -119,6 +141,7 @@
 
 <script>
     import CoreContent from './CoreContent'
+    import {mapState} from 'vuex';
 
     export default {
         name: 'navbar',
@@ -131,13 +154,17 @@
             primaryDrawer: {
                 model: null,
             },
-            items: [
+            itemsAdmin: [
                 {title: 'User Profile', path: '/user-profile', icon: 'dashboard'},
                 {title: 'Members', path: '/members', icon: 'supervised_user_circle'},
                 {title: 'Languages', path: '/languages', icon: 'language'},
                 {title: 'Fees', path: '/fees', icon: 'payment'},
                 {title: 'Logout', path: '/logout', icon: 'mdi-logout'},
             ],
+            itemsMember: [
+                {title: 'User Profile', path: '/user-profile', icon: 'dashboard'},
+                {title: 'Logout', path: '/logout', icon: 'mdi-logout'},
+            ]
         }),
         watch: {
             '$route'(val) {
@@ -163,6 +190,7 @@
                 }
             },
         },
+        computed: mapState(['user']),
         components: {
             CoreContent
         }

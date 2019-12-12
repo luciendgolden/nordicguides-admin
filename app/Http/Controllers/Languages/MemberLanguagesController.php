@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Languages;
 
 use App\Http\Controllers\Controller;
+use App\Models\LanguageModel;
 use App\Models\MemberLanguagesModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -26,5 +27,10 @@ class MemberLanguagesController extends Controller
             ->get();
 
         return response()->json($languages, 200);
+    }
+
+    public function updateLanguage(Request $request, LanguageModel $language){
+        $language->update($request->all());
+        return response()->json($language, 200);
     }
 }

@@ -7,6 +7,7 @@
         name: "Logout",
         mounted() {
             this.$store.dispatch('logout');
+            this.$router.push('/');
         }
     }
 </script>

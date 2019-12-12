@@ -56,6 +56,19 @@ const store = new Vuex.Store({
                     });
             });
         },
+        fetchMembersNotIn({ commit }, id) {
+            return new Promise((resolve, reject) => {
+                Repository.get(`/members/notin/${id}`)
+                    .then(res => res.data)
+                    .then(data => {
+                        commit('SET_MEMBERS', data);
+                        resolve();
+                    })
+                    .catch(err => {
+                        reject(err);
+                    });
+            });
+        },
         fetchLanguages({ commit }) {
             return new Promise((resolve, reject) => {
                 Repository.get('/languages')
@@ -85,7 +98,8 @@ const store = new Vuex.Store({
         logout({commit}){
             commit('SET_USER', {});
             commit('SET_LOGIN', false);
-        }
+        },
+
     },
     mutations: {
         SET_USER(state, user) {

@@ -21,6 +21,9 @@
                                             <v-text-field v-model="user.lastname" label="Lastname"></v-text-field>
                                         </v-flex>
                                         <v-flex xs12 sm6>
+                                            <v-text-field v-model="user.password" label="Password" type="password"></v-text-field>
+                                        </v-flex>
+                                        <v-flex xs12 sm6>
                                             <v-menu
                                                 :close-on-content-click="false"
                                                 :nudge-right="40"
@@ -59,9 +62,13 @@
                                         <v-flex xs12 sm6>
                                             <v-text-field v-model="user.phone" label="Phone"></v-text-field>
                                         </v-flex>
-                                        <v-flex xs12 sm6>
+                                        <v-flex xs12 sm6 v-if="user.role == 'admin'">
                                             <v-combobox v-model="user.role" :items="roles" label="Role" chips></v-combobox>
                                         </v-flex>
+                                        <v-flex xs12 sm6 v-else>
+                                            <v-combobox v-model="user.role" :items="roles" label="Role" chips readonly></v-combobox>
+                                        </v-flex>
+
                                         <v-flex xs12 sm6>
                                             <v-combobox v-model="user.driverslicense" :items="driversLicense" label="Driverslicense"></v-combobox>
                                         </v-flex>

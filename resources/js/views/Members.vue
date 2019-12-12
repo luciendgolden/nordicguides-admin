@@ -4,7 +4,7 @@
             <v-data-table
                 :headers="headers"
                 :items="members"
-                :items-per-page="5"
+                :items-per-page="10"
                 class="elevation-1"
             ></v-data-table>
         </v-layout>
@@ -19,14 +19,23 @@
         data(){
             return {
                 headers: [
+                    { text: 'ID', value: 'memberID' },
                     { text: 'Firstname', value: 'firstname' },
                     { text: 'Lastname', value: 'lastname' },
+                    { text: 'Email', value: 'email' },
+                    { text: 'Birthdate', value: 'birthdate' },
+                    { text: 'Street', value: 'street' },
+                    { text: 'City', value: 'city' },
+                    { text: 'ZIP', value: 'zip' },
+                    { text: 'Role', value: 'role' },
+                    { text: 'Driver License', value: 'driverslicense' },
                 ]
             }
         },
-        computed: mapState(['members']),
+        computed: mapState(['members', 'user']),
         mounted(){
-            this.$store.dispatch('fetchMembers');
+            const id = this.user.memberID;
+            this.$store.dispatch('fetchMembersNotIn', id);
         }
     }
 </script>

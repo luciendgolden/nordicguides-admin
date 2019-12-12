@@ -7,6 +7,7 @@ import Members from "./views/Members";
 import Languages from "./views/Languages";
 import Fees from "./views/Fees";
 import Logout from "./views/Logout";
+import Register from "./views/Register";
 
 Vue.use(VueRouter)
 
@@ -15,6 +16,11 @@ const routes = [
         path: '/',
         name: 'Login',
         component: Login
+    },
+    {
+        path: '/register',
+        name: 'Register',
+        component: Register
     },
     {
         path: '/user-profile',

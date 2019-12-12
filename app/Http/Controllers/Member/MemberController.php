@@ -9,6 +9,12 @@ use Illuminate\Support\Facades\DB;
 
 class MemberController extends Controller
 {
+    public function membersNotIn($id){
+        $results = DB::select( DB::raw("select * from members WHERE members.memberID NOT IN (SELECT members.memberID FROM members WHERE memberID='$id')") );
+
+        return response()->json($results, 200);
+    }
+
     public function getAllFees(){
         $fees = DB::table('fees')
             ->get();
