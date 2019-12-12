@@ -29,8 +29,13 @@ class MemberLanguagesController extends Controller
         return response()->json($languages, 200);
     }
 
-    public function updateLanguage(Request $request, LanguageModel $language){
-        $language->update($request->all());
+    public function addLanguage(Request $request){
+        $language = LanguageModel::create($request->all());
         return response()->json($language, 200);
+    }
+
+    public function deleteLanguage(Request $request, LanguageModel $language){
+        $language->delete();
+        return response()->json(null, 204);
     }
 }

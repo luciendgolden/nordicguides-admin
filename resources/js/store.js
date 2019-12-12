@@ -99,7 +99,16 @@ const store = new Vuex.Store({
             commit('SET_USER', {});
             commit('SET_LOGIN', false);
         },
-
+        editLanguage({commit}, editedItem){
+            Repository.post('/languages', editedItem)
+                .then(() => commit('ADD_LANGUAGE', editedItem))
+                .catch(err => console.log(err));
+        },
+        deleteLanguage({commit}, language){
+            Repository.delete(`/languages/${language.language}`)
+                .then(() => commit('DELETE_LANGUAGE', language))
+                .catch(err => console.log(err));
+        }
     },
     mutations: {
         SET_USER(state, user) {
@@ -114,6 +123,13 @@ const store = new Vuex.Store({
         },
         SET_LANGUAGES(state, languages) {
             state.languages = languages;
+        },
+        ADD_LANGUAGE(state, item){
+            state.languages.unshift(item)
+        },
+        DELETE_LANGUAGE(state, language){
+            const index = state.languages.indexOf(language);
+            state.languages.splice(index, 1);
         },
         SET_FEES(state, fees) {
             state.fees = fees;

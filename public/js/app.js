@@ -2259,6 +2259,7 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+/* harmony import */ var _service_repository__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../service/repository */ "./resources/js/service/repository.js");
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
@@ -2335,6 +2336,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "Languages",
@@ -2375,8 +2379,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.dialog = true;
     },
     deleteItem: function deleteItem(item) {
-      var index = this.languages.indexOf(item);
-      confirm('Are you sure you want to delete this item?') && this.languages.splice(index, 1);
+      confirm('Are you sure you want to delete this item?') && this.$store.dispatch('deleteLanguage', item);
     },
     close: function close() {
       var _this = this;
@@ -2388,12 +2391,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }, 300);
     },
     save: function save() {
-      if (this.editedIndex > -1) {
-        Object.assign(this.languages[this.editedIndex], this.editedItem);
-      } else {
-        this.languages.push(this.editedItem);
-      }
-
+      this.$store.dispatch('editLanguage', this.editedItem);
       this.close();
     }
   },
@@ -4591,7 +4589,7 @@ var render = function() {
             attrs: {
               headers: _vm.headers,
               items: _vm.languages,
-              "items-per-page": 5
+              "items-per-page": 10
             },
             scopedSlots: _vm._u([
               {
@@ -4746,20 +4744,6 @@ var render = function() {
                 fn: function(ref) {
                   var item = ref.item
                   return [
-                    _c(
-                      "v-icon",
-                      {
-                        staticClass: "mr-2",
-                        attrs: { small: "" },
-                        on: {
-                          click: function($event) {
-                            return _vm.editItem(item)
-                          }
-                        }
-                      },
-                      [_vm._v("\n                    edit\n                ")]
-                    ),
-                    _vm._v(" "),
                     _c(
                       "v-icon",
                       {
@@ -60217,6 +60201,22 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
       var commit = _ref7.commit;
       commit('SET_USER', {});
       commit('SET_LOGIN', false);
+    },
+    editLanguage: function editLanguage(_ref8, editedItem) {
+      var commit = _ref8.commit;
+      _service_repository__WEBPACK_IMPORTED_MODULE_2__["default"].post('/languages', editedItem).then(function () {
+        return commit('ADD_LANGUAGE', editedItem);
+      })["catch"](function (err) {
+        return console.log(err);
+      });
+    },
+    deleteLanguage: function deleteLanguage(_ref9, language) {
+      var commit = _ref9.commit;
+      _service_repository__WEBPACK_IMPORTED_MODULE_2__["default"]["delete"]("/languages/".concat(language.language)).then(function () {
+        return commit('DELETE_LANGUAGE', language);
+      })["catch"](function (err) {
+        return console.log(err);
+      });
     }
   },
   mutations: {
@@ -60232,6 +60232,13 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
     },
     SET_LANGUAGES: function SET_LANGUAGES(state, languages) {
       state.languages = languages;
+    },
+    ADD_LANGUAGE: function ADD_LANGUAGE(state, item) {
+      state.languages.unshift(item);
+    },
+    DELETE_LANGUAGE: function DELETE_LANGUAGE(state, language) {
+      var index = state.languages.indexOf(language);
+      state.languages.splice(index, 1);
     },
     SET_FEES: function SET_FEES(state, fees) {
       state.fees = fees;

@@ -4,7 +4,7 @@
             <v-data-table
                 :headers="headers"
                 :items="languages"
-                :items-per-page="5"
+                :items-per-page="10"
                 class="elevation-1"
             >
                 <template v-slot:top>
@@ -46,6 +46,7 @@
                     </v-toolbar>
                 </template>
                 <template v-slot:item.action="{ item }">
+                    <!--
                     <v-icon
                         small
                         class="mr-2"
@@ -53,6 +54,7 @@
                     >
                         edit
                     </v-icon>
+                    -->
                     <v-icon
                         small
                         @click="deleteItem(item)"
@@ -70,6 +72,7 @@
 
 <script>
     import {mapState} from 'vuex';
+    import repository from "../service/repository";
 
     export default {
         name: "Languages",
@@ -108,8 +111,7 @@
             },
 
             deleteItem(item) {
-                const index = this.languages.indexOf(item)
-                confirm('Are you sure you want to delete this item?') && this.languages.splice(index, 1)
+                confirm('Are you sure you want to delete this item?') && this.$store.dispatch('deleteLanguage', item);
             },
 
             close() {
@@ -121,11 +123,8 @@
             },
 
             save() {
-                if (this.editedIndex > -1) {
-                    Object.assign(this.languages[this.editedIndex], this.editedItem)
-                } else {
-                    this.languages.push(this.editedItem)
-                }
+                this.$store.dispatch('editLanguage', this.editedItem);
+
                 this.close()
             }
         },

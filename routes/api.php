@@ -31,7 +31,8 @@ Route::get('memberlanguages', 'Languages\MemberLanguagesController@findAll');
 Route::get('memberlanguages/{memberId}', 'Languages\MemberLanguagesController@findById');
 
 Route::get('languages', 'Languages\MemberLanguagesController@getLanguages');
-Route::put('languages/{language}', 'Languages\MemberLanguagesController@updateLanguage');
+Route::post('languages', 'Languages\MemberLanguagesController@addLanguage');
+Route::delete('languages/{language}', 'Languages\MemberLanguagesController@deleteLanguage');
 
 Route::get('fees', 'Member\MemberController@getAllFees');
 
