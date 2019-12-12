@@ -18,7 +18,7 @@
                         <v-spacer></v-spacer>
                         <v-dialog v-model="dialog" max-width="500px">
                             <template v-slot:activator="{ on }">
-                                <v-btn color="primary" dark class="mb-2" v-on="on">New Item</v-btn>
+                                <v-btn color="success" dark class="mb-2" v-on="on">New Item</v-btn>
                             </template>
                             <v-card>
                                 <v-card-title>
@@ -57,6 +57,7 @@
                     -->
                     <v-icon
                         small
+                        color="error"
                         @click="deleteItem(item)"
                     >
                         delete

@@ -82,19 +82,6 @@ const store = new Vuex.Store({
                     });
             });
         },
-        fetchFees({ commit }) {
-            return new Promise((resolve, reject) => {
-                Repository.get('/fees')
-                    .then(res => res.data)
-                    .then(data => {
-                        commit('SET_FEES', data);
-                        resolve();
-                    })
-                    .catch(err => {
-                        reject(err);
-                    });
-            });
-        },
         logout({commit}){
             commit('SET_USER', {});
             commit('SET_LOGIN', false);
@@ -130,9 +117,6 @@ const store = new Vuex.Store({
         DELETE_LANGUAGE(state, language){
             const index = state.languages.indexOf(language);
             state.languages.splice(index, 1);
-        },
-        SET_FEES(state, fees) {
-            state.fees = fees;
         },
     },
     getters: {},

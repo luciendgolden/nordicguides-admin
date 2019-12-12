@@ -2200,7 +2200,7 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+/* harmony import */ var _service_repository__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../service/repository */ "./resources/js/service/repository.js");
 //
 //
 //
@@ -2214,18 +2214,133 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-
-/**
- * Show the Payment for the year
- * SELECT annualfee.year, annualfee.date, annualfee.amount, members.memberID, members.firstname, members.lastname
- * FROM annualfee
- * JOIN members ON members.memberID=annualfee.memberID WHERE year=2019
- */
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "Fees",
   data: function data() {
     return {
+      feeDrawer: false,
+      dialog: false,
+      fees: [],
       headers: [{
         text: 'Year',
         value: 'year'
@@ -2238,12 +2353,145 @@ __webpack_require__.r(__webpack_exports__);
       }, {
         text: 'Extra Fee',
         value: 'extrafee'
-      }]
+      }, {
+        text: 'Actions',
+        value: 'action',
+        sortable: false
+      }, {
+        text: 'Show Payment',
+        value: 'payment',
+        sortable: false
+      }],
+      payedFeesheaders: [{
+        text: 'Year',
+        value: 'year'
+      }, {
+        text: 'Date',
+        value: 'date'
+      }, {
+        text: 'Amount',
+        value: 'amount'
+      }, {
+        text: 'Member ID',
+        value: 'memberID'
+      }, {
+        text: 'First Name',
+        value: 'firstname'
+      }, {
+        text: 'Last Name',
+        value: 'lastname'
+      }],
+      payedFees: [],
+      editedIndex: -1,
+      editedItem: {
+        year: new Date().toISOString().substr(0, 4),
+        basicfee: 0,
+        duedate: new Date().toISOString().substr(0, 10),
+        extrafee: 0
+      },
+      defaultItem: {
+        year: new Date().toISOString().substr(0, 4),
+        basicfee: 0,
+        duedate: new Date().toISOString().substr(0, 10),
+        extrafee: 0
+      }
     };
   },
-  computed: Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(['fees']),
-  mounted: function mounted() {
-    this.$store.dispatch('fetchFees');
+  methods: {
+    initialize: function initialize() {
+      var _this = this;
+
+      _service_repository__WEBPACK_IMPORTED_MODULE_0__["default"].get('/fees').then(function (res) {
+        return res.data;
+      }).then(function (data) {
+        _this.fees = data;
+      })["catch"](function (err) {
+        return console.log(err);
+      });
+    },
+    editItem: function editItem(item) {
+      this.editedIndex = this.fees.indexOf(item);
+      this.editedItem = Object.assign({}, item);
+      this.dialog = true;
+    },
+    deleteItem: function deleteItem(item) {
+      var index = this.fees.indexOf(item);
+      confirm('Are you sure you want to delete this item?') && this.fees.splice(index, 1);
+    },
+    close: function close() {
+      var _this2 = this;
+
+      this.dialog = false;
+      setTimeout(function () {
+        _this2.editedItem = Object.assign({}, _this2.defaultItem);
+        _this2.editedIndex = -1;
+      }, 300);
+    },
+    save: function save() {
+      // update existig Item in fees Collection
+      if (this.editedIndex > -1) {
+        Object.assign(this.fees[this.editedIndex], this.editedItem);
+      } // create new Item
+      else {
+          this.fees.push(this.editedItem);
+        }
+
+      this.saveFeeToDb();
+      this.close();
+    },
+    saveFeeToDb: function saveFeeToDb() {
+      if (this.editedIndex > -1) {
+        var primaryKey = this.editedItem.year;
+        var baseDomain = 'http://nordicguides-admin.test';
+        var baseURL = "".concat(baseDomain, "/api/fees/").concat(primaryKey);
+        var url = new URL(baseURL);
+        var params = this.editedItem;
+        Object.keys(params).forEach(function (key) {
+          return url.searchParams.append(key, params[key]);
+        });
+        fetch(url, {
+          method: 'PUT'
+        }).then(function (res) {
+          return res.json;
+        })["catch"](function (err) {
+          return console.log(err);
+        });
+      } else {
+        _service_repository__WEBPACK_IMPORTED_MODULE_0__["default"].post('/fees', this.editedItem).then(function (res) {
+          return res.json;
+        })["catch"](function (err) {
+          return console.log(err);
+        });
+      }
+    },
+    showPayedFees: function showPayedFees(item) {
+      var _this3 = this;
+
+      this.editedIndex = this.fees.indexOf(item);
+      this.editedItem = Object.assign({}, item);
+      var year = this.editedItem.year;
+      _service_repository__WEBPACK_IMPORTED_MODULE_0__["default"].get("/fees/".concat(year)).then(function (res) {
+        return res.data;
+      }).then(function (data) {
+        return _this3.payedFees = data;
+      })["catch"](function (err) {
+        return console.log(err);
+      });
+      this.feeDrawer = true;
+    }
+  },
+  computed: {
+    formTitle: function formTitle() {
+      return this.editedIndex === -1 ? 'New Item' : 'Edit Item';
+    }
+  },
+  watch: {
+    dialog: function dialog(val) {
+      val || this.close();
+    }
+  },
+  created: function created() {
+    this.initialize();
   }
 });
 
@@ -2266,6 +2514,7 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+//
 //
 //
 //
@@ -4540,13 +4789,448 @@ var render = function() {
         "v-layout",
         { attrs: { "align-center": "", "justify-center": "" } },
         [
+          _c(
+            "v-bottom-sheet",
+            {
+              model: {
+                value: _vm.feeDrawer,
+                callback: function($$v) {
+                  _vm.feeDrawer = $$v
+                },
+                expression: "feeDrawer"
+              }
+            },
+            [
+              _c(
+                "v-sheet",
+                { staticClass: "text-center" },
+                [
+                  _c(
+                    "v-btn",
+                    {
+                      staticClass: "mt-6",
+                      attrs: { text: "", color: "red" },
+                      on: {
+                        click: function($event) {
+                          _vm.feeDrawer = !_vm.feeDrawer
+                        }
+                      }
+                    },
+                    [_vm._v("close")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-row",
+                    [
+                      _c(
+                        "v-col",
+                        { attrs: { cols: "12" } },
+                        [
+                          _c("v-data-table", {
+                            staticClass: "elevation-1",
+                            attrs: {
+                              headers: _vm.payedFeesheaders,
+                              items: _vm.payedFees,
+                              "items-per-page": 5
+                            }
+                          })
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          ),
+          _vm._v(" "),
           _c("v-data-table", {
             staticClass: "elevation-1",
             attrs: {
               headers: _vm.headers,
               items: _vm.fees,
               "items-per-page": 5
-            }
+            },
+            scopedSlots: _vm._u([
+              {
+                key: "top",
+                fn: function() {
+                  return [
+                    _c(
+                      "v-toolbar",
+                      { attrs: { flat: "", color: "white" } },
+                      [
+                        _c("v-toolbar-title", [_vm._v("Fees")]),
+                        _vm._v(" "),
+                        _c("v-divider", {
+                          staticClass: "mx-4",
+                          attrs: { inset: "", vertical: "" }
+                        }),
+                        _vm._v(" "),
+                        _c("v-spacer"),
+                        _vm._v(" "),
+                        _c(
+                          "v-dialog",
+                          {
+                            attrs: { "max-width": "500px" },
+                            scopedSlots: _vm._u([
+                              {
+                                key: "activator",
+                                fn: function(ref) {
+                                  var on = ref.on
+                                  return [
+                                    _c(
+                                      "v-btn",
+                                      _vm._g(
+                                        {
+                                          staticClass: "mb-2",
+                                          attrs: { color: "success", dark: "" }
+                                        },
+                                        on
+                                      ),
+                                      [_vm._v("New Item")]
+                                    )
+                                  ]
+                                }
+                              }
+                            ]),
+                            model: {
+                              value: _vm.dialog,
+                              callback: function($$v) {
+                                _vm.dialog = $$v
+                              },
+                              expression: "dialog"
+                            }
+                          },
+                          [
+                            _vm._v(" "),
+                            _c(
+                              "v-card",
+                              [
+                                _c("v-card-title", [
+                                  _c("span", { staticClass: "headline" }, [
+                                    _vm._v(_vm._s(_vm.formTitle))
+                                  ])
+                                ]),
+                                _vm._v(" "),
+                                _c(
+                                  "v-card-text",
+                                  [
+                                    _c(
+                                      "v-container",
+                                      [
+                                        _c(
+                                          "v-row",
+                                          [
+                                            _c(
+                                              "v-col",
+                                              {
+                                                attrs: {
+                                                  cols: "12",
+                                                  sm: "6",
+                                                  md: "4"
+                                                }
+                                              },
+                                              [
+                                                _c("v-text-field", {
+                                                  attrs: { label: "Basic Fee" },
+                                                  model: {
+                                                    value: _vm.editedItem.year,
+                                                    callback: function($$v) {
+                                                      _vm.$set(
+                                                        _vm.editedItem,
+                                                        "year",
+                                                        $$v
+                                                      )
+                                                    },
+                                                    expression:
+                                                      "editedItem.year"
+                                                  }
+                                                })
+                                              ],
+                                              1
+                                            ),
+                                            _vm._v(" "),
+                                            _c(
+                                              "v-col",
+                                              {
+                                                attrs: {
+                                                  cols: "12",
+                                                  sm: "6",
+                                                  md: "4"
+                                                }
+                                              },
+                                              [
+                                                _c("v-text-field", {
+                                                  attrs: { label: "Basic Fee" },
+                                                  model: {
+                                                    value:
+                                                      _vm.editedItem.basicfee,
+                                                    callback: function($$v) {
+                                                      _vm.$set(
+                                                        _vm.editedItem,
+                                                        "basicfee",
+                                                        $$v
+                                                      )
+                                                    },
+                                                    expression:
+                                                      "editedItem.basicfee"
+                                                  }
+                                                })
+                                              ],
+                                              1
+                                            ),
+                                            _vm._v(" "),
+                                            _c(
+                                              "v-col",
+                                              {
+                                                attrs: {
+                                                  cols: "12",
+                                                  sm: "6",
+                                                  md: "4"
+                                                }
+                                              },
+                                              [
+                                                _c(
+                                                  "v-menu",
+                                                  {
+                                                    attrs: {
+                                                      "close-on-content-click": false,
+                                                      "nudge-right": 40,
+                                                      transition:
+                                                        "scale-transition",
+                                                      "offset-y": "",
+                                                      "min-width": "290px"
+                                                    },
+                                                    scopedSlots: _vm._u([
+                                                      {
+                                                        key: "activator",
+                                                        fn: function(ref) {
+                                                          var on = ref.on
+                                                          return [
+                                                            _c(
+                                                              "v-text-field",
+                                                              _vm._g(
+                                                                {
+                                                                  attrs: {
+                                                                    label:
+                                                                      "Due Date",
+                                                                    "prepend-icon":
+                                                                      "date_range",
+                                                                    readonly:
+                                                                      "",
+                                                                    rules: [
+                                                                      function(
+                                                                        v
+                                                                      ) {
+                                                                        return (
+                                                                          !!v ||
+                                                                          "Date is required"
+                                                                        )
+                                                                      }
+                                                                    ]
+                                                                  },
+                                                                  model: {
+                                                                    value:
+                                                                      _vm
+                                                                        .editedItem
+                                                                        .duedate,
+                                                                    callback: function(
+                                                                      $$v
+                                                                    ) {
+                                                                      _vm.$set(
+                                                                        _vm.editedItem,
+                                                                        "duedate",
+                                                                        $$v
+                                                                      )
+                                                                    },
+                                                                    expression:
+                                                                      "editedItem.duedate"
+                                                                  }
+                                                                },
+                                                                on
+                                                              )
+                                                            )
+                                                          ]
+                                                        }
+                                                      }
+                                                    ])
+                                                  },
+                                                  [
+                                                    _vm._v(" "),
+                                                    _c("v-date-picker", {
+                                                      attrs: {
+                                                        color: "success"
+                                                      },
+                                                      model: {
+                                                        value:
+                                                          _vm.editedItem
+                                                            .duedate,
+                                                        callback: function(
+                                                          $$v
+                                                        ) {
+                                                          _vm.$set(
+                                                            _vm.editedItem,
+                                                            "duedate",
+                                                            $$v
+                                                          )
+                                                        },
+                                                        expression:
+                                                          "editedItem.duedate"
+                                                      }
+                                                    })
+                                                  ],
+                                                  1
+                                                )
+                                              ],
+                                              1
+                                            ),
+                                            _vm._v(" "),
+                                            _c(
+                                              "v-col",
+                                              {
+                                                attrs: {
+                                                  cols: "12",
+                                                  sm: "6",
+                                                  md: "4"
+                                                }
+                                              },
+                                              [
+                                                _c("v-text-field", {
+                                                  attrs: { label: "Extra Fee" },
+                                                  model: {
+                                                    value:
+                                                      _vm.editedItem.extrafee,
+                                                    callback: function($$v) {
+                                                      _vm.$set(
+                                                        _vm.editedItem,
+                                                        "extrafee",
+                                                        $$v
+                                                      )
+                                                    },
+                                                    expression:
+                                                      "editedItem.extrafee"
+                                                  }
+                                                })
+                                              ],
+                                              1
+                                            )
+                                          ],
+                                          1
+                                        )
+                                      ],
+                                      1
+                                    )
+                                  ],
+                                  1
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "v-card-actions",
+                                  [
+                                    _c("v-spacer"),
+                                    _vm._v(" "),
+                                    _c(
+                                      "v-btn",
+                                      {
+                                        attrs: {
+                                          color: "blue darken-1",
+                                          text: ""
+                                        },
+                                        on: { click: _vm.close }
+                                      },
+                                      [_vm._v("Cancel")]
+                                    ),
+                                    _vm._v(" "),
+                                    _c(
+                                      "v-btn",
+                                      {
+                                        attrs: {
+                                          color: "blue darken-1",
+                                          text: ""
+                                        },
+                                        on: { click: _vm.save }
+                                      },
+                                      [_vm._v("Save")]
+                                    )
+                                  ],
+                                  1
+                                )
+                              ],
+                              1
+                            )
+                          ],
+                          1
+                        )
+                      ],
+                      1
+                    )
+                  ]
+                },
+                proxy: true
+              },
+              {
+                key: "item.action",
+                fn: function(ref) {
+                  var item = ref.item
+                  return [
+                    _c(
+                      "v-icon",
+                      {
+                        staticClass: "mr-2",
+                        attrs: { small: "", color: "primary" },
+                        on: {
+                          click: function($event) {
+                            return _vm.editItem(item)
+                          }
+                        }
+                      },
+                      [_vm._v("\n                    edit\n                ")]
+                    )
+                  ]
+                }
+              },
+              {
+                key: "item.payment",
+                fn: function(ref) {
+                  var item = ref.item
+                  return [
+                    _c(
+                      "v-btn",
+                      {
+                        staticClass: "mr-2",
+                        attrs: { text: "", small: "", color: "success" },
+                        on: {
+                          click: function($event) {
+                            return _vm.showPayedFees(item)
+                          }
+                        }
+                      },
+                      [_vm._v("\n                    show\n                ")]
+                    )
+                  ]
+                }
+              },
+              {
+                key: "no-data",
+                fn: function() {
+                  return [
+                    _c(
+                      "v-btn",
+                      {
+                        attrs: { color: "primary" },
+                        on: { click: _vm.initialize }
+                      },
+                      [_vm._v("Reset")]
+                    )
+                  ]
+                },
+                proxy: true
+              }
+            ])
           })
         ],
         1
@@ -4624,7 +5308,7 @@ var render = function() {
                                       _vm._g(
                                         {
                                           staticClass: "mb-2",
-                                          attrs: { color: "primary", dark: "" }
+                                          attrs: { color: "success", dark: "" }
                                         },
                                         on
                                       ),
@@ -4747,7 +5431,7 @@ var render = function() {
                     _c(
                       "v-icon",
                       {
-                        attrs: { small: "" },
+                        attrs: { small: "", color: "error" },
                         on: {
                           click: function($event) {
                             return _vm.deleteItem(item)
@@ -60184,34 +60868,21 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
         });
       });
     },
-    fetchFees: function fetchFees(_ref6) {
+    logout: function logout(_ref6) {
       var commit = _ref6.commit;
-      return new Promise(function (resolve, reject) {
-        _service_repository__WEBPACK_IMPORTED_MODULE_2__["default"].get('/fees').then(function (res) {
-          return res.data;
-        }).then(function (data) {
-          commit('SET_FEES', data);
-          resolve();
-        })["catch"](function (err) {
-          reject(err);
-        });
-      });
-    },
-    logout: function logout(_ref7) {
-      var commit = _ref7.commit;
       commit('SET_USER', {});
       commit('SET_LOGIN', false);
     },
-    editLanguage: function editLanguage(_ref8, editedItem) {
-      var commit = _ref8.commit;
+    editLanguage: function editLanguage(_ref7, editedItem) {
+      var commit = _ref7.commit;
       _service_repository__WEBPACK_IMPORTED_MODULE_2__["default"].post('/languages', editedItem).then(function () {
         return commit('ADD_LANGUAGE', editedItem);
       })["catch"](function (err) {
         return console.log(err);
       });
     },
-    deleteLanguage: function deleteLanguage(_ref9, language) {
-      var commit = _ref9.commit;
+    deleteLanguage: function deleteLanguage(_ref8, language) {
+      var commit = _ref8.commit;
       _service_repository__WEBPACK_IMPORTED_MODULE_2__["default"]["delete"]("/languages/".concat(language.language)).then(function () {
         return commit('DELETE_LANGUAGE', language);
       })["catch"](function (err) {
@@ -60239,9 +60910,6 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
     DELETE_LANGUAGE: function DELETE_LANGUAGE(state, language) {
       var index = state.languages.indexOf(language);
       state.languages.splice(index, 1);
-    },
-    SET_FEES: function SET_FEES(state, fees) {
-      state.fees = fees;
     }
   },
   getters: {}
