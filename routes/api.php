@@ -27,6 +27,9 @@ Route::get('members/city/{id}', 'Member\MemberController@showListOfGuidesInCity'
 
 Route::get('memberlanguages', 'Languages\MemberLanguagesController@findAll');
 Route::get('memberlanguages/{memberId}', 'Languages\MemberLanguagesController@findById');
+Route::get('languages', 'Languages\MemberLanguagesController@getLanguages');
+
+Route::get('fees', 'Member\MemberController@getAllFees');
 
 Route::post('login', 'Login\LoginController@doLogin');
 Route::post('register', 'Login\LoginController@doLogin');

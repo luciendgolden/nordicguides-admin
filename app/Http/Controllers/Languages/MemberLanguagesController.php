@@ -20,4 +20,11 @@ class MemberLanguagesController extends Controller
 
         return response()->json($memberlanguages, 200);
     }
+
+    public function getLanguages(){
+        $languages = DB::table('languages')
+            ->get();
+
+        return response()->json($languages, 200);
+    }
 }

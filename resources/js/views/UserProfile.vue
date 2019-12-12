@@ -84,7 +84,10 @@
                                             <v-btn
                                                 class="mx-0 font-weight-light"
                                                 color="success"
-                                                @click="save()"
+                                                :loading="loading"
+                                                :disabled="loading"
+                                                @click="loader = 'loading'"
+
                                             >
                                                 Update Profile
                                             </v-btn>
@@ -138,6 +141,8 @@
         name: "UserProfile",
         data() {
             return {
+                loader: null,
+                loading: false,
                 groups: [],
                 memberlanguages: [],
                 roles: ["member", "admin"],
@@ -150,6 +155,18 @@
                 this.editedUser = Object.assign({}, this.user);
                 this.$store.dispatch('updateUser', this.editedUser);
             }
+        },
+        watch: {
+            loader () {
+                const l = this.loader
+                this[l] = !this[l]
+
+                this.editedUser = Object.assign({}, this.user);
+                this.$store.dispatch('updateUser', this.editedUser);
+                setTimeout(() => (this[l] = false), 3000)
+
+                this.loader = null
+            },
         },
         computed: {
             user() {

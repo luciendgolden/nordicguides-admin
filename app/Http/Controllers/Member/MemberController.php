@@ -9,6 +9,13 @@ use Illuminate\Support\Facades\DB;
 
 class MemberController extends Controller
 {
+    public function getAllFees(){
+        $fees = DB::table('fees')
+            ->get();
+
+        return response()->json($fees, 200);
+    }
+
     public function findAll()
     {
         return response()->json(MemberModel::get(), 200);

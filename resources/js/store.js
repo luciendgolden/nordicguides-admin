@@ -8,7 +8,10 @@ Vue.use(Vuex);
 const store = new Vuex.Store({
     state: {
         loggedIn: false,
-        user: {}
+        user: {},
+        members: [],
+        languages: [],
+        fees: [],
     },
     actions: {
         loginUser({commit}, data){
@@ -40,6 +43,49 @@ const store = new Vuex.Store({
                     .catch(err => reject(err));
             });
         },
+        fetchMembers({ commit }) {
+            return new Promise((resolve, reject) => {
+                Repository.get('/members')
+                    .then(res => res.data)
+                    .then(data => {
+                        commit('SET_MEMBERS', data);
+                        resolve();
+                    })
+                    .catch(err => {
+                        reject(err);
+                    });
+            });
+        },
+        fetchLanguages({ commit }) {
+            return new Promise((resolve, reject) => {
+                Repository.get('/languages')
+                    .then(res => res.data)
+                    .then(data => {
+                        commit('SET_LANGUAGES', data);
+                        resolve();
+                    })
+                    .catch(err => {
+                        reject(err);
+                    });
+            });
+        },
+        fetchFees({ commit }) {
+            return new Promise((resolve, reject) => {
+                Repository.get('/fees')
+                    .then(res => res.data)
+                    .then(data => {
+                        commit('SET_FEES', data);
+                        resolve();
+                    })
+                    .catch(err => {
+                        reject(err);
+                    });
+            });
+        },
+        logout({commit}){
+            commit('SET_USER', {});
+            commit('SET_LOGIN', false);
+        }
     },
     mutations: {
         SET_USER(state, user) {
@@ -48,7 +94,16 @@ const store = new Vuex.Store({
         },
         SET_LOGIN(state, bool){
             state.loggedIn = bool;
-        }
+        },
+        SET_MEMBERS(state, members) {
+            state.members = members;
+        },
+        SET_LANGUAGES(state, languages) {
+            state.languages = languages;
+        },
+        SET_FEES(state, fees) {
+            state.fees = fees;
+        },
     },
     getters: {},
 });
